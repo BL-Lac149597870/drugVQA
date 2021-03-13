@@ -1,0 +1,86 @@
+<!--
+ * @Author: QHGG
+ * @Date: 2021-03-12 20:40:06
+ * @LastEditTime: 2021-03-12 22:32:08
+ * @LastEditors: QHGG
+ * @Description: 
+ * @FilePath: /drugVQA/origin.html
+-->
+
+<html>
+    <body style="margin:0">
+        <canvas id="main" style="width:100%;height:100%"></canvas>
+    </body>
+</html>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.0.2/dist/echarts.min.js"></script>
+<script>
+    var chartDom = document.getElementById('main');
+    chartDom.width=chartDom.clientWidth*window.devicePixelRatio;
+    chartDom.height=chartDom.clientHeight*window.devicePixelRatio;   
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    var data = [{
+        fixed: true,
+        x: myChart.getWidth() / 2,
+        y: myChart.getHeight() / 2,
+        symbolSize: 5,
+        id: '-1'
+    }];
+
+    var edges = [];
+
+    option = {
+        series: [{
+            type: 'graph',
+            layout: 'force',
+            animation: false,
+            data: data,
+            
+            emphasis: {
+                    focus: 'adjacency',
+                    label: {
+                        position: 'right',
+                        show: true
+                    }
+                },
+            edges: edges
+        }]
+    };
+
+    axios({
+        method:'get',
+        url:'http://localhost:5001',
+        responseType:'json',
+        })
+        .then(function(response) {
+            console.log(123)
+        });
+
+    setInterval(function () {
+        data.push({
+            id: data.length
+        });
+        var source = Math.round((data.length - 1) * Math.random());
+        var target = Math.round((data.length - 1) * Math.random());
+        if (source !== target) {
+            edges.push({
+                source: source,
+                target: target
+            });
+        }
+        myChart.setOption({
+            series: [{
+                roam: true,
+                data: data,
+                edges: edges
+            }]
+        });
+
+        // console.log('nodes: ' + data.length);
+        // console.log('links: ' + data.length);
+    }, 2000);
+
+    option && myChart.setOption(option);
+</script>
