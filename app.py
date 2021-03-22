@@ -1,7 +1,7 @@
 '''
 Author: QHGG
 Date: 2021-03-01 22:45:52
-LastEditTime: 2021-03-13 20:18:34
+LastEditTime: 2021-03-22 14:14:46
 LastEditors: QHGG
 Description: DrugVQA
 FilePath: /drugVQA/app.py
@@ -13,6 +13,7 @@ from map import *
 from model import *
 import warnings
 warnings.filterwarnings("ignore")
+from loguru import logger
 
 from flask import Flask, jsonify, request
 import json
@@ -64,6 +65,7 @@ def predict():
     if request.method == 'POST':
         # data = json.loads(request.data)
         lines = (request.form['smi'], )
+        logger.warning('smiles:{}'.format(request.form['smi']))
         input, seq_lengths, y = make_variables(lines, torch.tensor([0]),smiles_letter)
         # print(contactmap.shape, seq_lengths, lines)
         attention_model.hidden_state = attention_model.init_hidden()
